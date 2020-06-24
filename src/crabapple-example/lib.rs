@@ -1,4 +1,6 @@
 use crabapple::{hook_it, init_hooks};
+use crabapple::deps::foundation::NSString;
+type NSStr = *const NSString;
 
 hook_it! {
 	mod dock_example {
@@ -7,7 +9,7 @@ hook_it! {
 			use std::os::raw::c_double;
 		}
 		#[hook(class = "SBDockView", sel = "setBackgroundAlpha:")]
-		fn sba(orig, this: &Object, cmd: Sel, alpha: c_double) {
+		fn sba(orig, this: &Object, cmd: Sel, alpha: c_double) [] {
 			crabapple::objc::log(&format!("Crabapple dock_example | {:#?} - {:#?} - {:#?}", this, cmd, alpha));
 			orig(this, cmd, 0.0);
 		}
@@ -26,7 +28,7 @@ hook_it! {
 			request: &Object,
 			appid: &Object,
 			arg3: u64)
-		{
+		[] {
 			let title: *const NSString = *request.get_ivar::<*mut Object>("title") as *mut NSString;
 			let subtitle: *const NSString = *request.get_ivar::<*mut Object>("subtitle") as *mut NSString;
 			let message: *const NSString = *request.get_ivar::<*mut Object>("message") as *mut NSString;
@@ -36,4 +38,18 @@ hook_it! {
 	}
 }
 
-init_hooks!(dock_example, notification_example);
+hook_it! {
+	mod apps_example {
+		imports {
+			use crabapple::deps::objc::runtime::*;
+			use crabapple::deps::foundation::{INSString, NSString};
+			use crate::NSStr;
+		}
+		#[hook(class = "SBApplicationInfo", sel = "displayName")]
+        fn sba(_orig, _this: &Object, _cmd: Sel) [-> NSStr] {
+            return &*NSString::from_str("test");
+        }
+	}
+}
+
+init_hooks!(dock_example, notification_example, apps_example);

@@ -24,7 +24,7 @@ macro_rules! hook_it {
         }
         $(
             #[hook(class = $class:expr, sel = $sel:expr)]
-            fn $fn_name:ident($orig:ident, $($arg:ident: $ty_:ty),*) $(-> $ret:ty)? $body:tt
+            fn $fn_name:ident($orig:ident, $($arg:ident: $ty_:ty),*) [$(-> $ret:ty)?] $body:tt
         )*
     }) => {
         mod $mod_name {
