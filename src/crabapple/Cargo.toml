@@ -14,5 +14,11 @@ objc-foundation = "0.1"
 c_string = "0.7"
 paste = "0.1"
 
+[build-dependencies]
+cc = "1.0"
+
 [dev-dependencies]
 rusty-hook = "^0.11.1"
+
+[features]
+arm64e = []

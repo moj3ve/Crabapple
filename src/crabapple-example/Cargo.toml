@@ -11,3 +11,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 crabapple = { path = "../crabapple" }
+
+[features]
+arm64e = ["crabapple/arm64e"]

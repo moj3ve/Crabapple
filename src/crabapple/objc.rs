@@ -2,7 +2,6 @@ use crate::ffi::*;
 use crate::util::*;
 use ::objc::runtime::*;
 use objc_foundation::{INSString, NSString};
-use std::fmt;
 use std::os::raw::c_void;
 use std::ptr::NonNull;
 

@@ -1,9 +1,19 @@
-use objc::runtime::{Imp, Object};
+use objc::runtime::Object;
 use objc::*;
 use std::ffi::CStr;
 use std::os::raw::{c_char, c_void};
 
-use crate::objc::*;
+#[inline(always)]
+#[cfg(not(feature = "arm64e"))]
+pub fn strip_pac(pointer: *mut c_void) -> *mut c_void {
+	pointer
+}
+
+#[inline(always)]
+#[cfg(feature = "arm64e")]
+pub fn strip_pac(pointer: *mut c_void) -> *mut c_void {
+	unsafe { crate::ffi::ptr_strip(pointer) }
+}
 
 #[inline(always)]
 pub fn to_c_str(s: &str) -> *const c_char {
@@ -26,19 +36,5 @@ pub fn from_nsstr(s: &Object) -> String {
 	match c_str.to_str() {
 		Ok(e) => e.to_string(),
 		Err(_) => "".to_string(),
-	}
-}
-
-#[inline(always)]
-pub fn strip_pac(ptr: *mut c_void) -> *mut c_void {
-	unsafe { crate::ffi::ptr_strip(ptr) }
-}
-
-// TODO: make this shit work
-#[inline(always)]
-pub fn imp_to_func<R>(implementation: Imp) -> R {
-	unsafe {
-		let ptr: *mut c_void = std::mem::transmute(implementation);
-		std::mem::transmute_copy(&strip_pac(ptr))
 	}
 }

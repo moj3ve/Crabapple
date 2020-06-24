@@ -37,7 +37,7 @@ macro_rules! hook_it {
                     extern "C" fn $fn_name($($arg: $ty_),*) {
                         unsafe {
 							let [<$fn_name _ptr>]: *mut std::os::raw::c_void = [<$fn_name _orig>].load(std::sync::atomic::Ordering::Relaxed) as *mut _ as *mut std::os::raw::c_void;
-							let [<$fn_name _nopac>] = $crate::ffi::ptr_strip([<$fn_name _ptr>]);
+							let [<$fn_name _nopac>] = $crate::util::strip_pac([<$fn_name _ptr>]);
 							let $orig: [<$fn_name _fn>] = std::mem::transmute([<$fn_name _nopac>]);
 							$body
                         }

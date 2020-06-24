@@ -19,7 +19,6 @@ hook_it! {
 		imports {
 			use crabapple::deps::objc::runtime::*;
 			use crabapple::deps::foundation::NSString;
-			use crabapple::util::from_nsstr;
 		}
 		#[hook(class = "BBServer", sel = "_publishBulletinRequest:")]
 		fn pbr(orig, this: &Object,
