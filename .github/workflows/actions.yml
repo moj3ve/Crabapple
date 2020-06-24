@@ -1,6 +1,14 @@
 ---
 name: Lint & Compile
-on: [push, pull_request]
+on:
+    push:
+        paths:
+            - '**.rs'
+            - '**.toml'
+    pull_request:
+        paths:
+            - '**.rs'
+            - '**.toml'
 jobs:
     clippy:
         name: clippy
