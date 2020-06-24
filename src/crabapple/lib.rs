@@ -4,7 +4,6 @@ pub mod util;
 
 pub mod deps {
 	pub use ::objc;
-	pub use backtrace;
 	pub use objc_foundation as foundation;
 	pub use paste;
 }
@@ -87,8 +86,6 @@ macro_rules! init_hooks {
 					} else {
 						$crate::objc::log("[Crabapple] Caught panic!");
 					}
-					let backtrace = $crate::deps::backtrace::Backtrace::new();
-					$crate::objc::log(&format!("[Crabapple] Backtrace:\n{:#?}", backtrace));
 					if let Some(location) = panic_info.location() {
 						$crate::objc::log(&format!("[Crabapple] Panic occurred in file '{}' at line {}",
 							location.file(),

@@ -13,7 +13,6 @@ objc = "0.2"
 objc-foundation = "0.1"
 c_string = "0.7"
 paste = "0.1"
-backtrace = "0.3"
 
 [build-dependencies]
 cc = "1.0"

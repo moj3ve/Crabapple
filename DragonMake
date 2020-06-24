@@ -8,11 +8,11 @@ BuildCrabappleExample:
         - rm -rf out || true
         - mkdir out
         - cd src/crabapple-example
-        - RUSTC="/Users/wlm/Builds/rustc-ios-nbt/bin/rustc" cargo build --target=aarch64-apple-ios
+        - RUSTC="/Users/wlm/Builds/rustc-ios/bin/rustc" cargo build --target=aarch64-apple-ios
         - cd ../..
         - cp target/aarch64-apple-ios/debug/libcrabapple_example.dylib out/arm64.dylib
         - cd src/crabapple-example
-        - RUSTC="/Users/wlm/Builds/rustc-ios-nbt/bin/rustc" cargo build --target=aarch64-apple-ios --features arm64e
+        - RUSTC="/Users/wlm/Builds/rustc-ios/bin/rustc" cargo build --target=aarch64-apple-ios --features arm64e
         - cd ../..
         - cp target/aarch64-apple-ios/debug/libcrabapple_example.dylib out/_arm64e.dylib
         - res/arm64patcher out/_arm64e.dylib out/arm64e.dylib

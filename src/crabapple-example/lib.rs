@@ -16,6 +16,7 @@ hook_it! {
 	}
 }
 
+// This crashes, so I'm just using this to test panic hooks.
 hook_it! {
 	mod notification_example {
 		imports {
