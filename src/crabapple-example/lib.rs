@@ -46,7 +46,7 @@ hook_it! {
 			use crate::NSStr;
 		}
 		#[hook(class = "SBApplicationInfo", sel = "displayName")]
-		fn sba(_orig, _this: &Object, _cmd: Sel) [-> NSStr] {
+		fn sba(_orig, _this: &Object, _cmd: Sel) [NSStr] {
 			return &*NSString::from_str("test");
 		}
 	}
