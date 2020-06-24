@@ -1,0 +1,59 @@
+---
+name: Lint & Compile
+on: [push, pull_request]
+jobs:
+    clippy:
+        name: clippy
+        runs-on: macos-latest
+        steps:
+            - name: "Checkout sources"
+              uses: actions/checkout@v2
+            - name: "Install nightly toolchain with clippy available"
+              uses: actions-rs/toolchain@v1
+              with:
+                  components: clippy
+                  override: true
+                  profile: minimal
+                  target: aarch64-apple-ios
+                  toolchain: nightly
+            - name: "Run cargo clippy"
+              uses: actions-rs/cargo@v1
+              with:
+                  args: "-- -D warnings -A clippy::tabs_in_doc_comments -A clippy::not_unsafe_ptr_arg_deref"
+                  command: clippy
+    compile:
+        name: Compile
+        runs-on: macos-latest
+        steps:
+            - name: "Checkout sources"
+              uses: actions/checkout@v2
+            - name: "Install nightly toolchain"
+              uses: actions-rs/toolchain@v1
+              with:
+                  override: true
+                  target: aarch64-apple-ios
+                  toolchain: nightly
+            - name: "Run cargo build"
+              uses: actions-rs/cargo@v1
+              with:
+                  args: "--workspace --target aarch64-apple-ios"
+                  command: build
+    rustfmt:
+        name: rustfmt
+        runs-on: macos-latest
+        steps:
+            - name: "Checkout sources"
+              uses: actions/checkout@v2
+            - name: "Install nightly toolchain with rustfmt available"
+              uses: actions-rs/toolchain@v1
+              with:
+                  components: rustfmt
+                  override: true
+                  profile: minimal
+                  target: aarch64-apple-ios
+                  toolchain: nightly
+            - name: "Run cargo fmt"
+              uses: actions-rs/cargo@v1
+              with:
+                  args: "--all -- --check"
+                  command: fmt

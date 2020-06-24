@@ -11,9 +11,9 @@ pub mod deps {
 
 #[macro_export]
 macro_rules! sel {
-	($name:expr) => {{
+	($name:expr) => {
 		$crate::deps::objc::sel_impl!(concat!($name, '\0'))
-	}};
+	};
 }
 
 /// Sets up Objective-C hooks, based on the contained module and functions.
