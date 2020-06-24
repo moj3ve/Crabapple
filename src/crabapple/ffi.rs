@@ -7,6 +7,7 @@ use std::ptr::NonNull;
 extern "C" {
 	pub fn OBJC_NSString(str: *const c_char) -> *mut c_void;
 	pub fn OBJC_NSLog(str: *const c_char);
+	#[allow(improper_ctypes)]
 	pub fn NSLogv(nsFormat: *const NSString); // format from inside rust or it dies
 	pub fn MSHookMessageEx(
 		class: *const Class,

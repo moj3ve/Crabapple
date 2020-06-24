@@ -1,5 +1,5 @@
-use crabapple::{hook_it, init_hooks};
 use crabapple::deps::foundation::NSString;
+use crabapple::{hook_it, init_hooks};
 type NSStr = *const NSString;
 
 hook_it! {
@@ -46,9 +46,9 @@ hook_it! {
 			use crate::NSStr;
 		}
 		#[hook(class = "SBApplicationInfo", sel = "displayName")]
-        fn sba(_orig, _this: &Object, _cmd: Sel) [-> NSStr] {
-            return &*NSString::from_str("test");
-        }
+		fn sba(_orig, _this: &Object, _cmd: Sel) [-> NSStr] {
+			return &*NSString::from_str("test");
+		}
 	}
 }
 
