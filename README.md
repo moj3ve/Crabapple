@@ -1,10 +1,10 @@
 # Crabapple framework
 
-![GitHub issues](https://img.shields.io/github/issues/Crabapple-iOS/crabapple?style=for-the-badge)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Crabapple-iOS/crabapple?style=for-the-badge)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Crabapple-iOS/crabapple/Lint%20%26%20Compile?style=for-the-badge)
-![GitHub](https://img.shields.io/github/license/Crabapple-iOS/crabapple?style=for-the-badge)
-![Discord](https://img.shields.io/discord/725210900260454471?style=for-the-badge)
+[![GitHub issues](https://img.shields.io/github/issues/Crabapple-iOS/crabapple?style=for-the-badge)](https://github.com/Crabapple-iOS/crabapple/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/Crabapple-iOS/crabapple?style=for-the-badge)](https://github.com/Crabapple-iOS/crabapple/pulls)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/Crabapple-iOS/crabapple/Lint%20%26%20Compile?style=for-the-badge)](https://github.com/Crabapple-iOS/crabapple/actions)
+[![GitHub](https://img.shields.io/github/license/Crabapple-iOS/crabapple?style=for-the-badge)](https://github.com/Crabapple-iOS/crabapple/blob/master/LICENSE)
+[![Discord](https://img.shields.io/discord/725210900260454471?style=for-the-badge)](https://discord.gg/QHkCkRP)
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-crayons.svg)](https://forthebadge.com)
 
