@@ -48,7 +48,7 @@ hook_it! {
 		}
 		#[hook(class = "SBApplicationInfo", sel = "displayName")]
 		fn displayName(_orig, _this: &Object, _cmd: Sel) [NSStr] {
-			return &*NSString::from_str("test");
+			&*NSString::from_str("test")
 		}
 	}
 }
