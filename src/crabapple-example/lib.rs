@@ -20,7 +20,7 @@ hook_it! {
 			use crabapple::deps::objc::runtime::*;
 			use crabapple::deps::foundation::NSString;
 		}
-		#[hook(class = "BBServer", sel = "_publishBulletinRequest:")]
+		#[hook(class = "BBServer", sel = "_publishBulletinRequest:forSectionID:forDestinations:")]
 		fn pbr(orig, this: &Object,
 			cmd: Sel,
 			request: &Object,

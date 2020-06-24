@@ -4,6 +4,7 @@ pub mod util;
 
 pub mod deps {
 	pub use ::objc;
+	pub use backtrace;
 	pub use objc_foundation as foundation;
 	pub use paste;
 }
@@ -79,6 +80,22 @@ macro_rules! init_hooks {
 		#[cfg_attr(target_os = "ios", link_section = "__DATA,__mod_init_func")]
 		static LOAD: extern "C" fn() = {
 			extern "C" fn ctor() {
+				// Set up our panic hook, to ensure backtraces go to the oslog.
+				std::panic::set_hook(Box::new(|panic_info| {
+					if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
+						$crate::objc::log(&format!("[Crabapple] Caught panic!: {:#?}", s));
+					} else {
+						$crate::objc::log("[Crabapple] Caught panic!");
+					}
+					let backtrace = $crate::deps::backtrace::Backtrace::new();
+					$crate::objc::log(&format!("[Crabapple] Backtrace:\n{:#?}", backtrace));
+					if let Some(location) = panic_info.location() {
+						$crate::objc::log(&format!("[Crabapple] Panic occurred in file '{}' at line {}",
+							location.file(),
+							location.line(),
+						));
+					}
+				}));
 				$(
 					$hook_mod::_INIT_HOOKS();
 				)*
