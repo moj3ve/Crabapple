@@ -2,6 +2,7 @@ pub mod ffi;
 pub mod objc;
 pub mod util;
 
+/// Re-exported dependencies.
 pub mod deps {
 	pub use ::objc;
 	pub use objc_foundation as foundation;
@@ -12,9 +13,27 @@ pub mod deps {
 macro_rules! sel {
 	($name:expr) => {{
 		$crate::deps::objc::sel_impl!(concat!($name, '\0'))
-		}};
+	}};
 }
 
+/// Sets up Objective-C hooks, based on the contained module and functions.
+///
+/// # Example
+/// ```
+/// hook_it! {
+///		mod dock_example {
+///				imports {
+///					use crabapple::deps::objc::runtime::*;
+///					use std::os::raw::c_double;
+///				}
+///				#[hook(class = "SBDockView", sel = "setBackgroundAlpha:")]
+///				fn setBackgroundAlpha(orig, this: &Object, cmd: Sel, alpha: c_double) [] {
+///					orig(this, cmd, 0.0);
+///				}
+///			}
+///		}
+/// }
+/// ```
 #[macro_export]
 macro_rules! hook_it {
     (mod $mod_name:ident {
@@ -72,6 +91,8 @@ macro_rules! hook_it {
     }
 }
 
+/// Initializes the hook modules passed to it, and sets up a ctor function which will
+/// Also sets up a panic handler, which will output panic data to OSLog.
 #[macro_export]
 macro_rules! init_hooks {
 	($($hook_mod:ident),*) => {
