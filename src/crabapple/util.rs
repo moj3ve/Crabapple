@@ -27,13 +27,6 @@ pub fn to_c_str(s: &str) -> *const c_char {
 	unsafe { std::ffi::CStr::from_ptr(ptr as *const c_string::c_char).as_ptr() }
 }
 
-/// Converts a Rust `&str` to an Objective-C `*NSString`.
-/// Returns a pointer to the `NSString`.
-#[inline(always)]
-pub fn to_nsstr(s: &str) -> *const c_void {
-	unsafe { crate::ffi::OBJC_NSString(to_c_str(s)) }
-}
-
 /// Converts an Objective-C `*NSString` to a Rust `String`.
 #[inline(always)]
 pub fn from_nsstr(s: &Object) -> String {

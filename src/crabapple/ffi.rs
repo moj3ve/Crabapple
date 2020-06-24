@@ -1,6 +1,6 @@
 use ::objc::runtime::*;
 use objc_foundation::NSString;
-use std::os::raw::{c_char, c_void};
+use std::os::raw::c_void;
 use std::ptr::NonNull;
 
 #[link(name = "CydiaSubstrate", kind = "framework")]
