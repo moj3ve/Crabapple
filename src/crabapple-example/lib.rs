@@ -9,7 +9,7 @@ hook_it! {
 			use std::os::raw::c_double;
 		}
 		#[hook(class = "SBDockView", sel = "setBackgroundAlpha:")]
-		fn sba(orig, this: &Object, cmd: Sel, alpha: c_double) [] {
+		fn setBackgroundAlpha(orig, this: &Object, cmd: Sel, alpha: c_double) [] {
 			crabapple::objc::log(&format!("Crabapple dock_example | {:#?} - {:#?} - {:#?}", this, cmd, alpha));
 			orig(this, cmd, 0.0);
 		}
@@ -23,7 +23,7 @@ hook_it! {
 			use crabapple::deps::foundation::NSString;
 		}
 		#[hook(class = "BBServer", sel = "_publishBulletinRequest:forSectionID:forDestinations:")]
-		fn pbr(orig, this: &Object,
+		fn publishBulletinRequest(orig, this: &Object,
 			cmd: Sel,
 			request: &Object,
 			appid: &Object,
@@ -46,7 +46,7 @@ hook_it! {
 			use crate::NSStr;
 		}
 		#[hook(class = "SBApplicationInfo", sel = "displayName")]
-		fn sba(_orig, _this: &Object, _cmd: Sel) [NSStr] {
+		fn displayName(_orig, _this: &Object, _cmd: Sel) [NSStr] {
 			return &*NSString::from_str("test");
 		}
 	}
