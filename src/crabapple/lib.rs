@@ -36,37 +36,37 @@ macro_rules! sel {
 /// ```
 #[macro_export]
 macro_rules! hook_it {
-    (mod $mod_name:ident {
+	(mod $mod_name:ident {
 		imports {
-            $($prefix:item)*
-        }
-        $(
-            #[hook(class = $class:expr, sel = $sel:expr)]
-            fn $fn_name:ident($orig:ident, $($arg:ident: $ty_:ty),*) [$($ret:ty)?] $body:tt
-        )*
-    }) => {
-        mod $mod_name {
+			$($prefix:item)*
+		}
+		$(
+			#[hook(class = $class:expr, sel = $sel:expr)]
+			fn $fn_name:ident($orig:ident, $($arg:ident: $ty_:ty),*) [$($ret:ty)?] $body:tt
+		)*
+	}) => {
+		mod $mod_name {
 			$($prefix)*
-            $(
-                $crate::deps::paste::item! {
-                    type [<$fn_name _fn>] = unsafe extern "C" fn($($arg: $ty_),*) $(-> $ret)*;
-                    pub static [<$fn_name _orig>]: std::sync::atomic::AtomicPtr<$crate::deps::objc::runtime::Imp> = std::sync::atomic::AtomicPtr::new(std::ptr::null_mut());
+			$(
+				$crate::deps::paste::item! {
+					type [<$fn_name _fn>] = unsafe extern "C" fn($($arg: $ty_),*) $(-> $ret)*;
+					pub static [<$fn_name _orig>]: std::sync::atomic::AtomicPtr<$crate::deps::objc::runtime::Imp> = std::sync::atomic::AtomicPtr::new(std::ptr::null_mut());
 
-                    #[no_mangle]
-                    extern "C" fn $fn_name($($arg: $ty_),*) $(-> $ret)* {
-                        unsafe {
+					#[no_mangle]
+					extern "C" fn $fn_name($($arg: $ty_),*) $(-> $ret)* {
+						unsafe {
 							let [<$fn_name _ptr>]: *mut std::os::raw::c_void = [<$fn_name _orig>].load(std::sync::atomic::Ordering::Relaxed) as *mut _ as *mut std::os::raw::c_void;
 							let [<$fn_name _nopac>] = $crate::util::strip_pac([<$fn_name _ptr>]);
 							let $orig: [<$fn_name _fn>] = std::mem::transmute([<$fn_name _nopac>]);
 							$body
-                        }
-                    }
-                }
-            )*
+						}
+					}
+				}
+			)*
 
-            pub fn _INIT_HOOKS() {
-                unsafe {
-                    $(
+			pub fn _INIT_HOOKS() {
+				unsafe {
+					$(
 						$crate::deps::paste::expr! {
 							let target_sel = $crate::sel!($sel);
 							let [<$fn_name _ptr>] = $fn_name as [<$fn_name _fn>] as usize as *mut std::os::raw::c_void;
@@ -84,11 +84,11 @@ macro_rules! hook_it {
 								}
 							}
 						};
-                    )*
-                }
-            }
-        }
-    }
+					)*
+				}
+			}
+		}
+	}
 }
 
 /// Initializes the hook modules passed to it, and sets up a ctor function which will
