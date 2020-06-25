@@ -50,16 +50,23 @@ macro_rules! hook_it {
 			$(
 				$crate::deps::paste::item! {
 					type [<$fn_name _fn>] = unsafe extern "C" fn($($arg: $ty_),*) $(-> $ret)*;
+					type [<$fn_name _callfn>] = fn($($arg: $ty_),*) $(-> $ret)*;
 					pub static [<$fn_name _orig>]: std::sync::atomic::AtomicPtr<$crate::deps::objc::runtime::Imp> = std::sync::atomic::AtomicPtr::new(std::ptr::null_mut());
 
-					#[no_mangle]
-					extern "C" fn $fn_name($($arg: $ty_),*) $(-> $ret)* {
+					// Wrapper so unsafe isn't needed in the main hook.
+					fn [<$fn_name _call>]($($arg: $ty_),*) $(-> $ret)* {
 						unsafe {
 							let [<$fn_name _ptr>]: *mut std::os::raw::c_void = [<$fn_name _orig>].load(std::sync::atomic::Ordering::Relaxed) as *mut _ as *mut std::os::raw::c_void;
 							let [<$fn_name _nopac>] = $crate::util::strip_pac([<$fn_name _ptr>]);
-							let $orig: [<$fn_name _fn>] = std::mem::transmute([<$fn_name _nopac>]);
-							$body
+							let orig: [<$fn_name _fn>] = std::mem::transmute([<$fn_name _nopac>]);
+							orig($($arg),*)
 						}
+					}
+
+					#[no_mangle]
+					extern "C" fn $fn_name($($arg: $ty_),*) $(-> $ret)* {
+						let $orig: [<$fn_name _callfn>] = [<$fn_name _call>];
+						$body
 					}
 				}
 			)*
