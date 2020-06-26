@@ -3,12 +3,14 @@ name: Lint & Compile
 on:
     push:
         paths:
-            - '**.rs'
-            - '**.toml'
+            - "**.rs"
+            - "**.toml"
+            - "**.yml"
     pull_request:
         paths:
-            - '**.rs'
-            - '**.toml'
+            - "**.rs"
+            - "**.toml"
+            - "**.yml"
 jobs:
     clippy:
         name: clippy
@@ -35,6 +37,10 @@ jobs:
         steps:
             - name: "Checkout sources"
               uses: actions/checkout@v2
+            - name: "Setup DragonBuild"
+              run: |
+                  echo "::set-env name=DRAGONBUILD::$HOME/.dragonbuild"
+                  git clone --depth=1 --recursive https://github.com/DragonBuild/DragonBuild $HOME/.dragonbuild
             - name: "Install nightly toolchain"
               uses: actions-rs/toolchain@v1
               with:
