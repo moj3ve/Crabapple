@@ -15,7 +15,8 @@ The Crabapple framework is a library for building iOS tweaks in the Rust program
 If you have any questions, join our [official Discord server](https://discord.gg/QHkCkRP)!
 ## Requirements
  - [macOS](https://www.apple.com/macos) with [Xcode](https://developer.apple.com/xcode/)
- - Nightly [Rust](https://www.rust-lang.org/) (must have [rust#73516](https://github.com/rust-lang/rust/pull/73516) merged)
+ - Nightly [Rust](https://www.rust-lang.org/) (minimum `1.46.0-nightly (50fc24d8a 2020-06-25)` or any build that includes commit [56e115a](https://github.com/rust-lang/rust/commit/56e115a2627ba8bdd2e66c759457af96b2b0286a))
+   - Ensure the `aarch64-apple-ios` target is installed, by doing `rustup target add --toolchain nightly aarch64-apple-ios`
  - [DragonBuild](https://github.com/DragonBuild/DragonBuild) or [Theos](https://github.com/theos/theos)
    - The `DRAGONBUILD`/`THEOS` environmental variable must be set.
    - You may also point to the iOS SDK and CydiaSubstrate.framework manually.
