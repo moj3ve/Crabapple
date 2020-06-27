@@ -50,7 +50,7 @@ jobs:
             - name: "Run cargo build"
               uses: actions-rs/cargo@v1
               with:
-                  args: "--workspace --target aarch64-apple-ios"
+                  args: "--workspace --target aarch64-apple-ios --all-features"
                   command: build
     rustfmt:
         name: rustfmt

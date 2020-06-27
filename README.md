@@ -10,7 +10,7 @@
 
 The Crabapple framework is a library for building iOS tweaks in the Rust programming language. Normally this is done in Objective-C, or perhaps Swift, but now it is possible in Rust!
 
-**This is very experimental. Use at your own risk. Please do report any issues, though.**
+**This is very experimental. There _WILL_ be breaking changes. Use at your own risk. Please do report any issues, though.**
 
 If you have any questions, join our [official Discord server](https://discord.gg/QHkCkRP)!
 ## Requirements
@@ -37,7 +37,7 @@ hook_it! {
 		}
 		#[hook(class = "SBDockView", sel = "setBackgroundAlpha:")]
 		fn setBackgroundAlpha(orig, this: &Object, cmd: Sel, alpha: c_double) [] {
-			crabapple::objc::log(&format!("Crabapple dock_example | {:#?} - {:#?} - {:#?}", this, cmd, alpha));
+			crabapple::logging::log(&format!("Crabapple dock_example | {:#?} - {:#?} - {:#?}", this, cmd, alpha));
 			orig(this, cmd, 0.0);
 		}
 	}
