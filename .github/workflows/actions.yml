@@ -37,6 +37,8 @@ jobs:
         steps:
             - name: "Checkout sources"
               uses: actions/checkout@v2
+              with:
+                  submodules: recursive
             - name: "Setup DragonBuild"
               run: |
                   echo "::set-env name=DRAGONBUILD::$HOME/.dragonbuild"
