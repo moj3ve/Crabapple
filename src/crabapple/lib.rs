@@ -1,4 +1,8 @@
+#[macro_use]
+extern crate dlopen_derive; // move your damn shit to Rust 2018
+
 pub mod ffi;
+pub mod hooking;
 pub mod logging;
 pub mod objc;
 pub mod util;
@@ -79,8 +83,7 @@ macro_rules! hook_it {
 							let target_sel = $crate::sel!($sel);
 							let [<$fn_name _ptr>] = $fn_name as [<$fn_name _fn>] as usize as *mut std::os::raw::c_void;
 							$crate::logging::log(format!("Crabapple - Initializing class {}[{}] with hook {:#?}", $class, $sel, [<$fn_name _ptr>]));
-							let mut trampoline: Option<std::ptr::NonNull<$crate::deps::objc::runtime::Imp>> = None;
-							$crate::objc::hook($class, target_sel, [<$fn_name _ptr>], &mut trampoline);
+							let trampoline = $crate::hooking::hook($class, target_sel, [<$fn_name _ptr>]);
 							match trampoline {
 								Some(t) => {
 									let trampoline_ptr = t.as_ptr();

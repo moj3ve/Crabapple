@@ -14,6 +14,9 @@ objc-foundation = "0.1"
 c_string = "0.7"
 paste = "0.1"
 anyhow = "1.0"
+dlopen = "0.1"
+dlopen_derive = "0.1"
+once_cell = "1.4"
 lazy_static = { version = "1.4", optional = true }
 
 [build-dependencies]
@@ -23,5 +26,8 @@ cc = "1.0"
 rusty-hook = "^0.11.1"
 
 [features]
+default = ["substrate", "libhooker"]
 arm64e = []
 remotelog = ["lazy_static"]
+substrate = []
+libhooker = []
