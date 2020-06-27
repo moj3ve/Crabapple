@@ -10,7 +10,7 @@ path = "lib.rs"
 crate-type = ["cdylib"]
 
 [dependencies]
-crabapple = { path = "../crabapple" }
+crabapple = { path = "../crabapple", features = ["remotelog"] }
 
 [features]
 arm64e = ["crabapple/arm64e"]

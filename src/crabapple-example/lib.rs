@@ -1,3 +1,5 @@
+#![allow(unused_must_use)]
+
 use crabapple::deps::foundation::NSString;
 use crabapple::{hook_it, init_hooks};
 type NSStr = *const NSString;
@@ -10,7 +12,7 @@ hook_it! {
 		}
 		#[hook(class = "SBDockView", sel = "setBackgroundAlpha:")]
 		fn setBackgroundAlpha(orig, this: &Object, cmd: Sel, alpha: c_double) [] {
-			crabapple::objc::log(&format!("Crabapple dock_example | {:#?} - {:#?} - {:#?}", this, cmd, alpha));
+			crabapple::logging::log(format!("Crabapple dock_example | {:#?} - {:#?} - {:#?}", this, cmd, alpha));
 			orig(this, cmd, 0.0);
 		}
 	}
@@ -33,7 +35,7 @@ hook_it! {
 			let title: *const NSString = unsafe { *request.get_ivar::<*mut Object>("title") } as *mut NSString;
 			let subtitle: *const NSString = unsafe { *request.get_ivar::<*mut Object>("subtitle") } as *mut NSString;
 			let message: *const NSString = unsafe { *request.get_ivar::<*mut Object>("message") } as *mut NSString;
-			crabapple::objc::log(&format!("Crabapple notification_example | {:?} - {:?} - {:?}", title, subtitle, message));
+			crabapple::logging::log(format!("Crabapple notification_example | {:?} - {:?} - {:?}", title, subtitle, message));
 			orig(this, cmd, request, appid, arg3);
 		}
 	}
@@ -47,10 +49,19 @@ hook_it! {
 			use crate::NSStr;
 		}
 		#[hook(class = "SBApplicationInfo", sel = "displayName")]
-		fn displayName(_orig, _this: &Object, _cmd: Sel) [NSStr] {
+		fn displayName(orig, this: &Object, cmd: Sel) [NSStr] {
+			let original_name = orig(this, cmd);
+			crabapple::logging::log(format!("Crabapple Log - {}", crabapple::util::from_nsstr(original_name)));
 			&*NSString::from_str("test")
 		}
 	}
 }
 
-init_hooks!(dock_example, notification_example, apps_example);
+init_hooks!(
+	{
+		crabapple::logging::remote::set_remote_target(("192.168.0.195", 11909));
+	},
+	dock_example,
+	notification_example,
+	apps_example
+);

@@ -1,4 +1,5 @@
 pub mod ffi;
+pub mod logging;
 pub mod objc;
 pub mod util;
 
@@ -77,17 +78,17 @@ macro_rules! hook_it {
 						$crate::deps::paste::expr! {
 							let target_sel = $crate::sel!($sel);
 							let [<$fn_name _ptr>] = $fn_name as [<$fn_name _fn>] as usize as *mut std::os::raw::c_void;
-							$crate::objc::log(&format!("Crabapple - Initializing class {}[{}] with hook {:#?}", $class, $sel, [<$fn_name _ptr>]));
+							$crate::logging::log(format!("Crabapple - Initializing class {}[{}] with hook {:#?}", $class, $sel, [<$fn_name _ptr>]));
 							let mut trampoline: Option<std::ptr::NonNull<$crate::deps::objc::runtime::Imp>> = None;
 							$crate::objc::hook($class, target_sel, [<$fn_name _ptr>], &mut trampoline);
 							match trampoline {
 								Some(t) => {
 									let trampoline_ptr = t.as_ptr();
 									[<$fn_name _orig>].store(trampoline_ptr, std::sync::atomic::Ordering::Relaxed);
-									$crate::objc::log(&format!("Crabapple - Hooked class {}[{}] with trampoline {:#?}", $class, $sel, trampoline_ptr));
+									$crate::logging::log(format!("Crabapple - Hooked class {}[{}] with trampoline {:#?}", $class, $sel, trampoline_ptr));
 								},
 								_ => {
-									$crate::objc::log(&format!("Crabapple - Failed to hook class {}[{}]", $class, $sel));
+									$crate::logging::log(format!("Crabapple - Failed to hook class {}[{}]", $class, $sel));
 								}
 							}
 						};
@@ -100,6 +101,7 @@ macro_rules! hook_it {
 
 /// Initializes the hook modules passed to it, and sets up a ctor function which will
 /// Also sets up a panic handler, which will output panic data to OSLog.
+/// Can also have pre-hook and post-hook code.
 #[macro_export]
 macro_rules! init_hooks {
 	($($hook_mod:ident),*) => {
@@ -110,12 +112,12 @@ macro_rules! init_hooks {
 				// Set up our panic hook, to ensure backtraces go to the oslog.
 				std::panic::set_hook(Box::new(|panic_info| {
 					if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
-						$crate::objc::log(&format!("[Crabapple] Caught panic!: {:#?}", s));
+						$crate::logging::log(format!("[Crabapple] Caught panic!: {:#?}", s));
 					} else {
-						$crate::objc::log("[Crabapple] Caught panic!");
+						$crate::logging::log("[Crabapple] Caught panic!".to_string());
 					}
 					if let Some(location) = panic_info.location() {
-						$crate::objc::log(&format!("[Crabapple] Panic occurred in file '{}' at line {}",
+						$crate::logging::log(format!("[Crabapple] Panic occurred in file '{}' at line {}",
 							location.file(),
 							location.line(),
 						));
@@ -124,6 +126,61 @@ macro_rules! init_hooks {
 				$(
 					$hook_mod::_INIT_HOOKS();
 				)*
+			}
+		ctor
+		};
+	};
+	($pre:tt, $($hook_mod:ident),*) => {
+		#[used]
+		#[cfg_attr(target_os = "ios", link_section = "__DATA,__mod_init_func")]
+		static LOAD: extern "C" fn() = {
+			extern "C" fn ctor() {
+				// Set up our panic hook, to ensure backtraces go to the oslog.
+				std::panic::set_hook(Box::new(|panic_info| {
+					if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
+						$crate::logging::log(format!("[Crabapple] Caught panic!: {:#?}", s));
+					} else {
+						$crate::logging::log("[Crabapple] Caught panic!".to_string());
+					}
+					if let Some(location) = panic_info.location() {
+						$crate::logging::log(format!("[Crabapple] Panic occurred in file '{}' at line {}",
+							location.file(),
+							location.line(),
+						));
+					}
+				}));
+				$pre
+				$(
+					$hook_mod::_INIT_HOOKS();
+				)*
+			}
+		ctor
+		};
+	};
+	($pre:tt, $post:tt, $($hook_mod:ident),*) => {
+		#[used]
+		#[cfg_attr(target_os = "ios", link_section = "__DATA,__mod_init_func")]
+		static LOAD: extern "C" fn() = {
+			extern "C" fn ctor() {
+				// Set up our panic hook, to ensure backtraces go to the oslog.
+				std::panic::set_hook(Box::new(|panic_info| {
+					if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
+						$crate::logging::log(format!("[Crabapple] Caught panic!: {:#?}", s));
+					} else {
+						$crate::logging::log("[Crabapple] Caught panic!".to_string());
+					}
+					if let Some(location) = panic_info.location() {
+						$crate::logging::log(format!("[Crabapple] Panic occurred in file '{}' at line {}",
+							location.file(),
+							location.line(),
+						));
+					}
+				}));
+				$pre
+				$(
+					$hook_mod::_INIT_HOOKS();
+				)*
+				$post
 			}
 		ctor
 		};

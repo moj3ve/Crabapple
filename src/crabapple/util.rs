@@ -1,4 +1,4 @@
-use objc::runtime::Object;
+use crate::deps::foundation::NSString;
 use objc::*;
 use std::ffi::CStr;
 use std::os::raw::{c_char, c_void};
@@ -29,7 +29,7 @@ pub fn to_c_str(s: &str) -> *const c_char {
 
 /// Converts an Objective-C `*NSString` to a Rust `String`.
 #[inline(always)]
-pub fn from_nsstr(s: &Object) -> String {
+pub fn from_nsstr(s: *const NSString) -> String {
 	let nschar: *mut std::os::raw::c_char = unsafe { msg_send![s, UTF8String] };
 	let c_str: &CStr = unsafe { CStr::from_ptr(nschar) };
 	match c_str.to_str() {
