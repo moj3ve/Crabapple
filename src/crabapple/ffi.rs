@@ -1,4 +1,6 @@
 use objc_foundation::NSString;
+#[cfg(feature = "arm64e")]
+use std::os::raw::c_void;
 
 #[link(name = "Foundation", kind = "framework")]
 extern "C" {

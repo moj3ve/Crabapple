@@ -4,8 +4,8 @@ use dlopen::wrapper::Container;
 use objc::runtime::*;
 use objc::*;
 use once_cell::sync::Lazy;
-use std::ptr::NonNull;
 use std::os::raw::c_void;
+use std::ptr::NonNull;
 
 #[cfg(feature = "libhooker")]
 pub mod libhooker;
@@ -58,35 +58,37 @@ pub fn hook(class_name: &str, selector: &str, replacement: *mut c_void) -> Optio
 			Some(_libhooker) => {
 				match &*LIBBLACKJACK {
 					Some(libblackjack) => {
-						let ret = unsafe { libblackjack.LBHookMessage(class, sel, replacement, &mut trampoline) };
+						let ret = unsafe {
+							libblackjack.LBHookMessage(class, sel, replacement, &mut trampoline)
+						};
 						return match ret {
 							LibhookerError::Ok => trampoline,
 							LibhookerError::ErrSelectorNotFound => {
 								crate::logging::log(format!("Crabapple - libblackjack errored: An Objective-C selector [{}] was not found", selector));
 								None
-							},
+							}
 							LibhookerError::ShortFunc => {
 								crate::logging::log("Crabapple - libhooker errored: A function was too short to hook.".to_string());
 								None
-							},
+							}
 							LibhookerError::BadInstructionAtStart => {
 								crate::logging::log("Crabapple - libhooker errored: A problematic instruction was found at the start. We can't preserve the original function due to this instruction getting clobbered.".to_string());
 								None
-							},
+							}
 							LibhookerError::VM => {
 								crate::logging::log("Crabapple - libhooker errored: An error took place while handling memory pages.".to_string());
 								None
-							},
+							}
 							LibhookerError::NoSymbol => {
 								crate::logging::log("Crabapple - libhooker errored: No symbol was specified for hooking.".to_string());
 								None
-							},
+							}
 						};
-					},
-					None => {},
+					}
+					None => {}
 				}
-			},
-			None => {},
+			}
+			None => {}
 		}
 	}
 	#[cfg(feature = "substrate")]
@@ -95,9 +97,9 @@ pub fn hook(class_name: &str, selector: &str, replacement: *mut c_void) -> Optio
 			Some(substrate) => {
 				unsafe { substrate.MSHookMessageEx(class, sel, replacement, &mut trampoline) };
 				trampoline
-			},
-			None => None
-		}
+			}
+			None => None,
+		};
 	}
 	None
 }
