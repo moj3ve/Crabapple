@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 #[macro_use]
 extern crate dlopen_derive; // move your damn shit to Rust 2018
 

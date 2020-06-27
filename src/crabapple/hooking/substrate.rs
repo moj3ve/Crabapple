@@ -3,6 +3,13 @@ use objc::runtime::*;
 use std::os::raw::c_void;
 use std::ptr::NonNull;
 
+pub type MSHookMessageEx = unsafe extern "C" fn(
+	class: *const Class,
+	selector: Sel,
+	replacement: *mut c_void,
+	result: &mut Option<NonNull<Imp>>,
+);
+
 /// Wrapper for the CydiaSubstrate library.
 #[derive(WrapperApi)]
 pub struct Substrate {
@@ -16,4 +23,19 @@ pub struct Substrate {
 		replacement: *mut c_void,
 		result: &mut Option<NonNull<Imp>>,
 	),
+}
+
+impl Substrate {
+	pub unsafe fn MSHookMessageEx_NP(
+		&self,
+		class: *const Class,
+		selector: Sel,
+		replacement: *mut c_void,
+		result: &mut Option<NonNull<Imp>>,
+	) {
+		let pacced: *mut c_void = std::mem::transmute(self.MSHookMessageEx);
+		let nopac = crate::util::strip_pac(pacced);
+		let finale: MSHookMessageEx = std::mem::transmute(nopac);
+		(finale)(class, selector, replacement, result)
+	}
 }

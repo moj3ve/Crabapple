@@ -26,16 +26,12 @@ pub fn set_remote_target<T: ToSocketAddrs>(addr: T) -> Result<()> {
 
 /// Sends the log message to the RemoteLog server target, if set.
 /// Also outputs to OSLog.
-pub fn log(data: String) -> Result<()> {
-	crate::logging::oslog::log(&data);
+pub fn log<T: ToString>(data: T) -> Result<()> {
+	crate::logging::oslog::log(&data.to_string());
 	if let Ok(t) = TARGET.read() {
 		if let Some(addr) = *t {
 			let socket = UdpSocket::bind("0.0.0.0:0")?;
-			crate::logging::oslog::log(&format!(
-				"Sending '{}' to {:?} from {:?}!",
-				data, addr, socket
-			));
-			socket.send_to(data.as_bytes(), addr)?;
+			socket.send_to(data.to_string().as_bytes(), addr)?;
 		}
 	}
 	Ok(())

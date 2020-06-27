@@ -9,7 +9,7 @@ pub mod remote;
 /// crabapple::logging::log(format!("Hello {}, testing {}", "World!", 123));
 /// ```
 #[cfg(feature = "remotelog")]
-pub fn log(data: String) {
+pub fn log<T: ToString>(data: T) {
 	if let Err(e) = remote::log(data) {
 		oslog::log(&format!("[Crabapple] remotelog errored: {:?}", e));
 	}
@@ -22,6 +22,6 @@ pub fn log(data: String) {
 /// crabapple::logging::log(format!("Hello {}, testing {}", "World!", 123));
 /// ```
 #[cfg(not(feature = "remotelog"))]
-pub fn log(data: String) {
-	oslog::log(&data);
+pub fn log<T: ToString>(data: T) {
+	oslog::log(&data.to_string());
 }

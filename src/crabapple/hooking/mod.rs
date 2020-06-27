@@ -47,47 +47,47 @@ static SUBSTRATE: Lazy<Option<Container<Substrate>>> = Lazy::new(|| {
 });
 
 #[allow(unreachable_code, unused_variables)]
-pub fn hook(class_name: &str, selector: &str, replacement: *mut c_void) -> Option<NonNull<Imp>> {
+pub fn hook(class_name: &str, selector: Sel, replacement: *mut c_void) -> Option<NonNull<Imp>> {
 	let mut trampoline: Option<NonNull<Imp>> = None;
 	let class = crate::objc::get_class(class_name);
-	let sel = sel![selector];
 
 	#[cfg(feature = "libhooker")]
 	{
 		match &*LIBHOOKER {
-			Some(_libhooker) => {
-				match &*LIBBLACKJACK {
-					Some(libblackjack) => {
-						let ret = unsafe {
-							libblackjack.LBHookMessage(class, sel, replacement, &mut trampoline)
-						};
-						return match ret {
-							LibhookerError::Ok => trampoline,
-							LibhookerError::ErrSelectorNotFound => {
-								crate::logging::log(format!("Crabapple - libblackjack errored: An Objective-C selector [{}] was not found", selector));
-								None
-							}
-							LibhookerError::ShortFunc => {
-								crate::logging::log("Crabapple - libhooker errored: A function was too short to hook.".to_string());
-								None
-							}
-							LibhookerError::BadInstructionAtStart => {
-								crate::logging::log("Crabapple - libhooker errored: A problematic instruction was found at the start. We can't preserve the original function due to this instruction getting clobbered.".to_string());
-								None
-							}
-							LibhookerError::VM => {
-								crate::logging::log("Crabapple - libhooker errored: An error took place while handling memory pages.".to_string());
-								None
-							}
-							LibhookerError::NoSymbol => {
-								crate::logging::log("Crabapple - libhooker errored: No symbol was specified for hooking.".to_string());
-								None
-							}
-						};
-					}
-					None => {}
+			Some(_libhooker) => match &*LIBBLACKJACK {
+				Some(libblackjack) => {
+					crate::logging::log("Using Libhooker!");
+					let ret = unsafe {
+						libblackjack.LBHookMessage(class, selector, replacement, &mut trampoline)
+					};
+					return match ret {
+						LibhookerError::Ok => trampoline,
+						LibhookerError::ErrSelectorNotFound => {
+							crate::logging::log(format!("Crabapple - libblackjack errored: An Objective-C selector [{:#?}] was not found", selector));
+							None
+						}
+						LibhookerError::ShortFunc => {
+							crate::logging::log(
+								"Crabapple - libhooker errored: A function was too short to hook.",
+							);
+							None
+						}
+						LibhookerError::BadInstructionAtStart => {
+							crate::logging::log("Crabapple - libhooker errored: A problematic instruction was found at the start. We can't preserve the original function due to this instruction getting clobbered.");
+							None
+						}
+						LibhookerError::VM => {
+							crate::logging::log("Crabapple - libhooker errored: An error took place while handling memory pages.");
+							None
+						}
+						LibhookerError::NoSymbol => {
+							crate::logging::log("Crabapple - libhooker errored: No symbol was specified for hooking.");
+							None
+						}
+					};
 				}
-			}
+				None => {}
+			},
 			None => {}
 		}
 	}
@@ -95,7 +95,14 @@ pub fn hook(class_name: &str, selector: &str, replacement: *mut c_void) -> Optio
 	{
 		return match &*SUBSTRATE {
 			Some(substrate) => {
-				unsafe { substrate.MSHookMessageEx(class, sel, replacement, &mut trampoline) };
+				crate::logging::log("Using Substrate!");
+				crate::logging::log(format!(
+					"{:#?}, {:#?}, {:#?}, {:#?}",
+					class, selector, replacement, trampoline
+				));
+				unsafe {
+					substrate.MSHookMessageEx_NP(class, selector, replacement, &mut trampoline)
+				};
 				trampoline
 			}
 			None => None,
