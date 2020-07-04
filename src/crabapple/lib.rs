@@ -115,19 +115,21 @@ macro_rules! init_hooks {
 		static LOAD: extern "C" fn() = {
 			extern "C" fn ctor() {
 				// Set up our panic hook, to ensure backtraces go to the oslog.
-				std::panic::set_hook(Box::new(|panic_info| {
-					if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
-						$crate::logging::log(format!("[Crabapple] Caught panic!: {:#?}", s));
-					} else {
-						$crate::logging::log("[Crabapple] Caught panic!".to_string());
-					}
-					if let Some(location) = panic_info.location() {
-						$crate::logging::log(format!("[Crabapple] Panic occurred in file '{}' at line {}",
-							location.file(),
-							location.line(),
-						));
-					}
-				}));
+				if !cfg!(feature = "arm64e") {
+					std::panic::set_hook(Box::new(|panic_info| {
+						if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
+							$crate::logging::log(format!("[Crabapple] Caught panic!: {:#?}", s));
+						} else {
+							$crate::logging::log("[Crabapple] Caught panic!".to_string());
+						}
+						if let Some(location) = panic_info.location() {
+							$crate::logging::log(format!("[Crabapple] Panic occurred in file '{}' at line {}",
+								location.file(),
+								location.line(),
+							));
+						}
+					}));
+				}
 				$(
 					$hook_mod::_INIT_HOOKS();
 				)*
@@ -141,19 +143,21 @@ macro_rules! init_hooks {
 		static LOAD: extern "C" fn() = {
 			extern "C" fn ctor() {
 				// Set up our panic hook, to ensure backtraces go to the oslog.
-				std::panic::set_hook(Box::new(|panic_info| {
-					if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
-						$crate::logging::log(format!("[Crabapple] Caught panic!: {:#?}", s));
-					} else {
-						$crate::logging::log("[Crabapple] Caught panic!".to_string());
-					}
-					if let Some(location) = panic_info.location() {
-						$crate::logging::log(format!("[Crabapple] Panic occurred in file '{}' at line {}",
-							location.file(),
-							location.line(),
-						));
-					}
-				}));
+				if !cfg!(feature = "arm64e") {
+					std::panic::set_hook(Box::new(|panic_info| {
+						if let Some(s) = panic_info.payload().downcast_ref::<&str>() {
+							$crate::logging::log(format!("[Crabapple] Caught panic!: {:#?}", s));
+						} else {
+							$crate::logging::log("[Crabapple] Caught panic!".to_string());
+						}
+						if let Some(location) = panic_info.location() {
+							$crate::logging::log(format!("[Crabapple] Panic occurred in file '{}' at line {}",
+								location.file(),
+								location.line(),
+							));
+						}
+					}));
+				}
 				$pre
 				$(
 					$hook_mod::_INIT_HOOKS();

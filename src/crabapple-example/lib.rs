@@ -18,29 +18,6 @@ hook_it! {
 	}
 }
 
-// This crashes, so I'm just using this to test panic hooks.
-hook_it! {
-	mod notification_example {
-		imports {
-			use crabapple::deps::objc::runtime::*;
-			use crabapple::deps::foundation::NSString;
-		}
-		#[hook(class = "BBServer", sel = "_publishBulletinRequest:forSectionID:forDestinations:")]
-		fn publishBulletinRequest(orig, this: &Object,
-			cmd: Sel,
-			request: &Object,
-			appid: &Object,
-			arg3: u64)
-		[] {
-			let title: *const NSString = unsafe { *request.get_ivar::<*mut Object>("title") } as *mut NSString;
-			let subtitle: *const NSString = unsafe { *request.get_ivar::<*mut Object>("subtitle") } as *mut NSString;
-			let message: *const NSString = unsafe { *request.get_ivar::<*mut Object>("message") } as *mut NSString;
-			crabapple::logging::log(format!("Crabapple notification_example | {:?} - {:?} - {:?}", title, subtitle, message));
-			orig(this, cmd, request, appid, arg3);
-		}
-	}
-}
-
 hook_it! {
 	mod apps_example {
 		imports {
@@ -57,11 +34,4 @@ hook_it! {
 	}
 }
 
-init_hooks!(
-	{
-		crabapple::logging::remote::set_remote_target(("192.168.0.195", 11909));
-	},
-	dock_example,
-	notification_example,
-	apps_example
-);
+init_hooks!(dock_example, apps_example);
