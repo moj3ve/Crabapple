@@ -1,0 +1,9 @@
+Package: tech.luxx.armwrap
+Name: armwrap
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: An awesome MobileSubstrate tweak!
+Maintainer: aspen <luxx4x@protonmail.com>
+Author: aspen <luxx4x@protonmail.com>
+Section: Tweaks
+Depends: mobilesubstrate (>= 0.9.5000)
