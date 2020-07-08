@@ -75,7 +75,9 @@ macro_rules! hook_it {
 					#[no_mangle]
 					extern "C" fn $fn_name($($arg: $ty_),*) $(-> $ret)* {
 						let $orig: [<$fn_name _callfn>] = [<$fn_name _call>];
-						$body
+						unsafe { // look, msg_send and co are already mad unsafe, so whatever.
+							$body
+						}
 					}
 				}
 			)*
