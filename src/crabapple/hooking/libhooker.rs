@@ -35,7 +35,7 @@ impl LibBlackjack {
 		result: &mut Option<NonNull<Imp>>,
 	) -> LibhookerError {
 		let pacced: *mut c_void = std::mem::transmute(self.LBHookMessage);
-		let nopac = crate::util::strip_pac(pacced);
+		let nopac = crate::strip_pac(pacced);
 		let finale: LBHookMessage = std::mem::transmute(nopac);
 		(finale)(class, selector, replacement, result)
 	}
@@ -55,7 +55,7 @@ pub struct LibHooker {
 impl LibHooker {
 	pub unsafe extern "C" fn LHStrError_NP(&self, err: LibhookerError) -> *const c_char {
 		let pacced: *mut c_void = std::mem::transmute(self.LHStrError);
-		let nopac = crate::util::strip_pac(pacced);
+		let nopac = crate::strip_pac(pacced);
 		let finale: LHStrError = std::mem::transmute(nopac);
 		(finale)(err)
 	}

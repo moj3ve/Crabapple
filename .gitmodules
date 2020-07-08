@@ -1,4 +1,0 @@
-[submodule "librustsupport"]
-	path = librustsupport
-	url = https://github.com/Crabapple-iOS/librustsupport
-	branch = master

@@ -34,7 +34,7 @@ impl Substrate {
 		result: &mut Option<NonNull<Imp>>,
 	) {
 		let pacced: *mut c_void = std::mem::transmute(self.MSHookMessageEx);
-		let nopac = crate::util::strip_pac(pacced);
+		let nopac = crate::strip_pac(pacced);
 		let finale: MSHookMessageEx = std::mem::transmute(nopac);
 		(finale)(class, selector, replacement, result)
 	}

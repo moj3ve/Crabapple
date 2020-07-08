@@ -9,6 +9,8 @@ pub mod logging;
 pub mod objc;
 pub mod util;
 
+pub use ptrauth_sys::*;
+
 /// Re-exported dependencies.
 pub mod deps {
 	pub use ::objc;
@@ -64,7 +66,7 @@ macro_rules! hook_it {
 					fn [<$fn_name _call>]($($arg: $ty_),*) $(-> $ret)* {
 						unsafe {
 							let [<$fn_name _ptr>]: *mut std::os::raw::c_void = [<$fn_name _orig>].load(std::sync::atomic::Ordering::Relaxed) as *mut _ as *mut std::os::raw::c_void;
-							let [<$fn_name _nopac>] = $crate::util::strip_pac([<$fn_name _ptr>]);
+							let [<$fn_name _nopac>] = $crate::strip_pac([<$fn_name _ptr>]);
 							let orig: [<$fn_name _fn>] = std::mem::transmute([<$fn_name _nopac>]);
 							orig($($arg),*)
 						}
